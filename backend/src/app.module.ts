@@ -21,23 +21,32 @@ import { HttpModule } from '@nestjs/axios';
     HttpModule,
     ConfigModule.forRoot(),
     TerminusModule,
-    ThrottlerModule.forRoot([{
-      ttl: 60000,
-      limit: 1000
-    }]),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 1000,
+      },
+    ]),
     ScheduleModule.forRoot(),
     TasksModule,
     ObjectStoreModule,
-    AmsOracleConnectorModule
+    AmsOracleConnectorModule,
   ],
   controllers: [AppController, MetricsController, HealthController],
-  providers: [AppService, ObjectStoreService, AmsOracleConnectorService]
+  providers: [AppService, ObjectStoreService, AmsOracleConnectorService],
 })
-export class AppModule { // let's add a middleware on all routes
+export class AppModule {
+  // let's add a middleware on all routes
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(HTTPLoggerMiddleware).exclude({ path: 'metrics', method: RequestMethod.ALL }, {
-      path: 'health',
-      method: RequestMethod.ALL
-    }).forRoutes('*');
+    consumer
+      .apply(HTTPLoggerMiddleware)
+      .exclude(
+        { path: 'metrics', method: RequestMethod.ALL },
+        {
+          path: 'health',
+          method: RequestMethod.ALL,
+        },
+      )
+      .forRoutes('*');
   }
 }

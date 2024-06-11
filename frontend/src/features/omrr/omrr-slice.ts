@@ -3,12 +3,13 @@ import {
   ActionReducerMapBuilder,
   createAsyncThunk,
   createSlice,
-  PayloadAction
-} from '@reduxjs/toolkit';
+  PayloadAction,
+} from '@reduxjs/toolkit'
 import { RootState } from '@/app/store'
 import apiService from '@/service/api-service'
 import { Location } from '@/interfaces/location'
 import rfdc from 'rfdc'
+import './omrr.json'
 
 const deepClone = rfdc({ circles: true })
 
@@ -37,7 +38,11 @@ export interface OmrrSliceState {
 export const fetchOMRRData = createAsyncThunk(
   'data/fetchOMRRRecords',
   async () => {
-    const result = await apiService.getAxiosInstance().get('/omrr')
+    const result = await apiService
+      .getAxiosInstance()
+      .get(
+        'https://nr-epd-organics-info-test-frontend.apps.silver.devops.gov.bc.ca/api/omrr',
+      )
 
     return result.data
   },
@@ -97,7 +102,7 @@ function filterDataBasedOnDifferentFilters(state: OmrrSliceState) {
     const filteredItems = state.filteredValue.filter(
       (item: OmrrData) =>
         item['Authorization Type']?.toLowerCase() ===
-        'notification'.toLowerCase()
+        'notification'.toLowerCase(),
     )
     finalFilteredOMRRList = [...finalFilteredOMRRList, ...filteredItems]
   }
@@ -129,7 +134,7 @@ function filterDataBasedOnDifferentFilters(state: OmrrSliceState) {
   }
   if (state.landApplicationBioSolidsFilter) {
     const filteredItems = state.filteredValue.filter((item: OmrrData) =>
-      item['Operation Type']?.toLowerCase().includes('land application')
+      item['Operation Type']?.toLowerCase().includes('land application'),
     )
     nestedFilterOMRRList = [...nestedFilterOMRRList, ...filteredItems]
   }
@@ -274,9 +279,9 @@ export const omrrSlice = createSlice({
       // Store the data in the state
       // format the date as MMM DD, YYYY
       const lastModified = new Date(action.payload.lastModified)
-      const month = lastModified.toLocaleString('default', { month: 'short' });
+      const month = lastModified.toLocaleString('default', { month: 'short' })
       state.lastModified =
-        month + ' ' + lastModified.getDate() + ', ' + lastModified.getFullYear();
+        month + ' ' + lastModified.getDate() + ', ' + lastModified.getFullYear()
       let omrrData = []
       for (const item of action.payload.omrrData) {
         const individualData = {
@@ -285,17 +290,17 @@ export const omrrSlice = createSlice({
         if (individualData['Effective/Issue Date']) {
           const effDate = individualData['Effective/Issue Date'].substring(
             0,
-            10
-          );
-          individualData['Effective/Issue Date'] = effDate;
+            10,
+          )
+          individualData['Effective/Issue Date'] = effDate
         } else {
           individualData['Effective/Issue Date'] = undefined
         }
         if (item['Last Amendment Date']) {
           const lastAmendmentDate = individualData[
             'Last Amendment Date'
-            ].substring(0, 10);
-          individualData['Last Amendment Date'] = lastAmendmentDate;
+          ].substring(0, 10)
+          individualData['Last Amendment Date'] = lastAmendmentDate
         } else {
           individualData['Last Amendment Date'] = undefined
         }

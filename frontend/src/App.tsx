@@ -14,6 +14,7 @@ import HeaderWithRouting from '@/components/HeaderWithRouting'
 
 export default function App() {
   const status: string = useSelector((state: RootState) => state.omrr.status)
+  console.log(status)
   const dispatch = useDispatch()
   useEffect(() => {
     //@ts-expect-error
@@ -22,19 +23,22 @@ export default function App() {
   return (
     <Grid container sx={{ flexGrow: 1 }}>
       {status === 'loading' ? (
-        <><Grid item xs={12}>
-          <Header />
-        </Grid>
+        <>
+          <Grid item xs={12}>
+            <Header />
+          </Grid>
           <Grid item xs={12}>
             <CircularProgress />
           </Grid>
           <Grid item xs={12}>
             <Footer />
-          </Grid></>
+          </Grid>
+        </>
       ) : status === 'failed' ? (
-        <><Grid item xs={12}>
-          <Header />
-        </Grid>
+        <>
+          <Grid item xs={12}>
+            <Header />
+          </Grid>
           <Grid item xs={12}>
             <Snackbar
               message="Loading Failed, Please try later refreshing the page"
@@ -48,21 +52,23 @@ export default function App() {
           </Grid>
           <Grid item xs={12}>
             <Footer />
-          </Grid></>
+          </Grid>
+        </>
       ) : (
-        <><BrowserRouter>
-          <Grid item xs={12}>
-            <HeaderWithRouting />
-          </Grid>
-          <Grid item xs={12}>
-            <AppRoutes />
-          </Grid>
-          <Grid item xs={12}>
-            <Footer />
-          </Grid>
-        </BrowserRouter></>
+        <>
+          <BrowserRouter>
+            <Grid item xs={12}>
+              <HeaderWithRouting />
+            </Grid>
+            <Grid item xs={12}>
+              <AppRoutes />
+            </Grid>
+            <Grid item xs={12}>
+              <Footer />
+            </Grid>
+          </BrowserRouter>
+        </>
       )}
-
     </Grid>
   )
 }

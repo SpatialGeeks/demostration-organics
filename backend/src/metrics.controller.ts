@@ -4,7 +4,6 @@ import { register } from './prom';
 
 @Controller('metrics')
 export class MetricsController {
-
   @Get()
   async getMetrics(@Res() res: Response) {
     const appMetrics = await register.metrics();
