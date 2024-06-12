@@ -90,74 +90,15 @@ export default function AuthorizationMap() {
       map.remove()
     }
   }, [])
-  const pagination = (
-    <Grid item xs={12}>
-      <Grid
-        container
-        spacing={0}
-        direction={{ xs: 'column', sm: 'row' }}
-        sx={{
-          display: 'flex',
-          width: '100%',
-          justifyContent: 'space-between',
-          alignItems: {
-            xs: 'flex-start',
-            sm: 'center',
-          },
-        }}
-      >
-        <Pagination
-          sx={{
-            margin: {
-              xs: '0 0 1em',
-              sm: '0',
-            },
-            '& .MuiPaginationItem-root.Mui-selected': {
-              backgroundColor: '#053662',
-              color: '#ffffff',
-              ':hover': {},
-            },
-            '& .MuiPaginationItem-root': {
-              color: '#053662',
-              backgroundColor: '#ffffff',
-            },
-          }}
-          variant="outlined"
-          shape="rounded"
-          count={Math.ceil(filteredValue.length / 10)}
-          siblingCount={mdMatches ? 1 : 0}
-          page={page}
-          onChange={(event, value) => dispatch(setPage(value))}
-        />
-        <Typography
-          sx={{
-            display: 'block',
-          }}
-        >
-          Showing {(page - 1) * 10 + 1}-
-          {Math.min(page * 10, filteredValue.length)} of {filteredValue.length}{' '}
-          results
-        </Typography>
-      </Grid>
-    </Grid>
-  )
-  const headerCard = (
-    <CardContent sx={{ padding: '0' }}>
-      <Typography
-        data-testid="auth-list-headin1"
-        variant="h1"
-        sx={{
-          margin: '0 0 .75em',
-        }}
-        component="h1"
-      >
-        Authorizations
-      </Typography>
-      <Typography data-testid="auth-list-heading2" variant="h6">
-        Authorized compost and biosolid facilities in B.C.
-      </Typography>
-    </CardContent>
-  )
+
+  useEffect(() => {
+    if (map) {
+      map.on('load', () => {
+        map.addControl(new maplibregl.NavigationControl(), 'top-right')
+      })
+    }
+  }, [map])
+
   return (
     <Grid container spacing={2} sx={{ marginTop: '1vh' }}>
       <Grid item xs={12}>
@@ -171,6 +112,7 @@ export default function AuthorizationMap() {
               padding: '1em',
               margin: '0px',
               borderRadius: '25px',
+              zIndex: 100,
             }}
           >
             <Grid item xs={12}>

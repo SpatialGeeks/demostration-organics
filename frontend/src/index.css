@@ -33,8 +33,7 @@
 }
 
 .map-maplibre-container {
-  height: 60em;
-  margin-left: 1em;
-  border-radius: 30px;
+  margin-top: 4.5em;
+  height: 70em;
   width: 100%;
 }
