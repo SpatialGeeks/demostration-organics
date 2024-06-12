@@ -38,7 +38,7 @@ import { useNavigate } from 'react-router'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { useEffect } from 'react'
-export default function AuthorizationList() {
+export default function AuthorizationMap() {
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
@@ -135,24 +135,7 @@ export default function AuthorizationList() {
     </CardContent>
   )
   return (
-    <Grid container spacing={2} sx={{ marginTop: '4vh' }}>
-      <Grid item xs={12}>
-        <Card
-          elevation={0}
-          variant="outlined"
-          sx={{
-            padding: {
-              xs: '7em 1.5em 5em',
-              sm: '5em 2.1em 2.5em',
-              md: '10em 2.25em 5em',
-            },
-            backgroundColor: '#FCC85D',
-            border: '0',
-          }}
-        >
-          {headerCard}
-        </Card>
-      </Grid>
+    <Grid container spacing={2} sx={{ marginTop: '1vh' }}>
       <Grid item xs={12}>
         <Grid
           container
@@ -392,19 +375,7 @@ export default function AuthorizationList() {
               }}
             />
           </Grid>
-          <Grid item xs={12}>
-            <Typography
-              sx={{
-                margin: '2em 0em',
-                width: '100%',
-                maxWidth: '100%',
-                fontStyle: 'italic',
-              }}
-            >
-              Data Last Updated : {lastModified}
-            </Typography>
-          </Grid>
-          {pagination}
+
           <Grid
             item
             xs={12}
@@ -416,199 +387,9 @@ export default function AuthorizationList() {
             }}
           >
             <Grid container spacing={3}>
-              {filteredValue &&
-                filteredValue.length > 0 &&
-                filteredValue
-                  .slice((page - 1) * 10, page * 10)
-                  .map((item, index) => (
-                    <Grid key={index} item xs={12} sx={{ width: '100%' }}>
-                      <Card
-                        elevation={0}
-                        sx={{
-                          background: '#F1F8FE',
-                          order: 5,
-                          width: '100%',
-                          border: '1px solid #D8D8D8',
-                        }}
-                        key={index}
-                      >
-                        <CardContent
-                          sx={{
-                            padding: {
-                              xs: '1.5em 1.5em 2.5em !important',
-                              md: '1.5em 2.5em 2.5em !important',
-                            },
-                          }}
-                        >
-                          <Typography
-                            variant="body2"
-                            color="text.secondary"
-                            sx={{ marginBottom: '0.6em' }}
-                          >
-                            <span
-                              style={{
-                                fontFamily: 'BCSans',
-                                fontStyle: 'normal',
-                              }}
-                            >
-                              {' '}
-                              Authorization #:
-                              <span
-                                style={{
-                                  textDecoration: 'underline',
-                                  marginLeft: '0.5em',
-                                }}
-                              >
-                                {item['Authorization Number']}
-                              </span>
-                            </span>
-                          </Typography>
-                          <Typography
-                            variant="h5"
-                            component="h5"
-                            sx={{
-                              marginBottom: {
-                                xs: '1em',
-                                md: '.7em',
-                              },
-                            }}
-                          >
-                            <span
-                              style={{
-                                fontFamily: 'BCSans-Bold',
-                              }}
-                            >
-                              {item['Regulated Party']}
-                            </span>
-                          </Typography>
-                          <Grid container direction="row">
-                            <Grid
-                              item
-                              xs={12}
-                              md={6}
-                              sx={{ marginBottom: { xs: '1.5em', md: '0' } }}
-                            >
-                              <Box sx={{ marginBottom: '.5em' }}>
-                                <span
-                                  style={{
-                                    fontFamily: 'BCSans-Bold',
-                                  }}
-                                >
-                                  Location of Facility
-                                </span>
-                              </Box>
-                              <Box>
-                                <span
-                                  style={{
-                                    fontFamily: 'BCSans',
-                                    fontStyle: 'normal',
-                                  }}
-                                >
-                                  {item['Facility Location']}
-                                </span>
-                              </Box>
-                            </Grid>
-                            <Grid item xs={12} md={6}>
-                              <Box sx={{ marginBottom: '.5em' }}>
-                                <span
-                                  style={{
-                                    fontFamily: 'BCSans-Bold',
-                                  }}
-                                >
-                                  Authorization Type
-                                </span>
-                              </Box>
-                              <Box>
-                                <span
-                                  style={{
-                                    fontFamily: 'BCSans',
-                                    fontStyle: 'normal',
-                                  }}
-                                >
-                                  {item['Authorization Type']}
-                                  {item['Operation Type']
-                                    ? `, ${item['Operation Type']}`
-                                    : ''}
-                                </span>
-                              </Box>
-                            </Grid>
-                          </Grid>
-                          <Stack
-                            sx={{
-                              justifyContent: 'space-between',
-                              alignItems: {
-                                xs: 'flex-start',
-                                sm: 'center',
-                              },
-                              display: 'flex',
-                              marginTop: '1em',
-                            }}
-                            direction={{ xs: 'column', sm: 'row' }}
-                          >
-                            <Stack
-                              direction="row"
-                              sx={{
-                                alignItems: 'center',
-                                display: 'flex',
-                                marginTop: '1em',
-                              }}
-                              spacing={1}
-                            >
-                              <span>Status: </span>
-                              <Chip
-                                sx={{
-                                  background:
-                                    item['Authorization Status'] === 'Active'
-                                      ? '#42814A'
-                                      : '#605E5C',
-                                  color: '#ffffff',
-                                }}
-                                label={item['Authorization Status']}
-                              />
-                            </Stack>
-                            <CardActions
-                              sx={{
-                                padding: '1em 0 0',
-                                width: {
-                                  xs: '100%',
-                                  sm: 'auto',
-                                },
-                              }}
-                            >
-                              <Button
-                                data-testid={`auth-list-view-facility-details-button-${item['Authorization Number']}`}
-                                size="large"
-                                sx={{
-                                  border: '1px solid #053662;',
-                                  borderRadius: '4px',
-                                  boxSizing: 'border-box',
-                                  textTransform: 'none',
-                                  color: '#255A90;',
-                                  width: {
-                                    xs: '100%',
-                                    sm: 'auto',
-                                  },
-                                }}
-                                onClick={() =>
-                                  buttonClicked(
-                                    `/authorization/${item['Authorization Number']}`,
-                                    {
-                                      ...item,
-                                    },
-                                  )
-                                }
-                              >
-                                View Facility Details
-                              </Button>
-                            </CardActions>
-                          </Stack>
-                        </CardContent>
-                      </Card>
-                    </Grid>
-                  ))}
+              {/* map here  */}
             </Grid>
           </Grid>
-          {pagination}
         </Grid>
       </Grid>
     </Grid>

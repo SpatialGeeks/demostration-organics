@@ -57,15 +57,12 @@ function informationTypography() {
             <ul style={{ marginBottom: '2em' }}>
               <li>
                 Governs the construction and operation of compost facilities
-              </li>
-              {' '}
+              </li>{' '}
               <li>
                 Regulates the production, distribution, storage, sale and use of
                 biosolids and compost
-              </li>
-              {' '}
-              <li>Controls how compost facilities are built and operated</li>
-              {' '}
+              </li>{' '}
+              <li>Controls how compost facilities are built and operated</li>{' '}
             </ul>
             The B.C. government has a plan to update the regulation to:
             <ul style={{ marginBottom: '2em' }}>
@@ -193,6 +190,26 @@ export default function Dashboard() {
             }}
           >
             List all authorizations
+          </Button>
+          <Button
+            data-testid="list_all_authorizations"
+            size="large"
+            sx={{
+              margin: {
+                sm: '0 2.2em 3em',
+                xs: '0 .9em 3em',
+              },
+              boxSizing: 'border-box',
+              border: '1px solid #FFFFFF',
+              borderRadius: '4px',
+              color: '#FFFFFF',
+              textTransform: 'none',
+            }}
+            onClick={() => {
+              buttonClicked('/map')
+            }}
+          >
+            See all authorizations in map
           </Button>
         </CardActions>
       </Stack>
