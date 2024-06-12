@@ -116,6 +116,24 @@ export default function AuthorizationMap() {
         },
       })
 
+      map.on('click', 'points', (e) => {
+        const coordinates = e.features[0].geometry.coordinates.slice()
+        const description = e.features[0].properties
+        const authNumber = description['Authorization Number']
+
+        const propertyElements = description
+          ? Object.entries(description)
+              .map(([key, value]) => {
+                return `<div ><strong>${key}:</strong> ${value}</div>`
+              })
+              .join('')
+          : ''
+
+        const html = ` <div id="popupfacilities">${propertyElements}</div>`
+
+        new maplibregl.Popup().setLngLat(coordinates).setHTML(html).addTo(map)
+      })
+
       map.on('mouseenter', 'points', () => {
         map.getCanvas().style.cursor = 'pointer'
       })
@@ -145,6 +163,12 @@ export default function AuthorizationMap() {
       })),
     }
     if (map) {
+      const popups = document.getElementsByClassName('maplibregl-popup')
+
+      if (popups.length) {
+        popups[0].remove()
+      }
+
       map.getSource('points').setData(geoJson)
     }
   }, [filteredValue])
