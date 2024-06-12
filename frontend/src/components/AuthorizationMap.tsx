@@ -41,6 +41,7 @@ import { MutableRefObject, useEffect, useState, useRef } from 'react'
 import maplibregl from 'maplibre-gl'
 import MapboxDraw from '@mapbox/mapbox-gl-draw'
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css'
+import * as turf from '@turf/turf'
 
 export default function AuthorizationMap() {
   const mapContainer: MutableRefObject<null | HTMLDivElement> = useRef(null)
@@ -170,6 +171,15 @@ export default function AuthorizationMap() {
       }
 
       map.getSource('points').setData(geoJson)
+      const extent = turf.bbox(geoJson)
+      map.fitBounds(extent, {
+        padding: {
+          top: 50,
+          bottom: 50,
+          left: 50,
+          right: 50,
+        },
+      })
     }
   }, [filteredValue])
 
