@@ -34,6 +34,13 @@
 
 .map-maplibre-container {
   margin-top: 4.5em;
-  height: 70em;
+  height: 84vh;
   width: 100%;
+  overflow: hidden;
+}
+
+.maplibregl-popup-content {
+  min-height: 200px;
+  max-height: 200px;
+  overflow-y: scroll;
 }
