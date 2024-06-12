@@ -86,82 +86,68 @@ export default function AuthorizationMap() {
 
     setMap(map)
 
+    const geoJson = {
+      type: 'FeatureCollection',
+      features: filteredValue.map((item) => ({
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [item.Longitude, item.Latitude],
+        },
+        properties: { ...item },
+      })),
+    }
+
+    map.on('load', () => {
+      map.addSource('points', {
+        type: 'geojson',
+        data: geoJson,
+      })
+
+      map.addLayer({
+        id: 'points',
+        type: 'circle',
+        source: 'points',
+        paint: {
+          'circle-radius': 6,
+          'circle-color': '#053662',
+          'circle-stroke-width': 1,
+          'circle-stroke-color': '#ffffff',
+        },
+      })
+
+      map.on('mouseenter', 'points', () => {
+        map.getCanvas().style.cursor = 'pointer'
+      })
+
+      map.on('mouseleave', 'points', () => {
+        map.getCanvas().style.cursor = ''
+      })
+    })
+
     return () => {
       map.remove()
     }
   }, [])
 
   useEffect(() => {
-    if (map) {
-      map.on('load', () => {
-        map.addControl(new maplibregl.NavigationControl(), 'top-right')
-      })
+    if (!map) return
+
+    const geoJson = {
+      type: 'FeatureCollection',
+      features: filteredValue.map((item) => ({
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [item.Longitude, item.Latitude],
+        },
+        properties: { ...item },
+      })),
     }
-  }, [map])
-
-  console.log(filteredValue, filteredValue.length, 'length')
-  const geoJson = {
-    type: 'FeatureCollection',
-    features: filteredValue.map((item) => ({
-      type: 'Feature',
-      geometry: {
-        type: 'Point',
-        coordinates: [item.Longitude, item.Latitude],
-      },
-      properties: { ...item },
-    })),
-  }
-
-  console.log(geoJson)
-
-  useEffect(() => {
     if (map) {
-      map.on('load', () => {
-        map.addSource('points', {
-          type: 'geojson',
-          data: geoJson,
-        })
-
-        map.addLayer({
-          id: 'points',
-          type: 'circle',
-          source: 'points',
-          paint: {
-            'circle-radius': 6,
-            'circle-color': '#B42222',
-            'circle-stroke-width': 2,
-            'circle-stroke-color': '#ffffff',
-          },
-        })
-
-        map.on('click', 'points', (e) => {
-          const coordinates = e.features[0].geometry.coordinates.slice()
-          const description = e.features[0].properties
-
-          const propertyElements = description
-            ? Object.entries(description)
-                .map(([key, value]) => {
-                  return `<div ><strong>${key}:</strong> ${value}</div>`
-                })
-                .join('')
-            : ''
-
-          new maplibregl.Popup()
-            .setLngLat(coordinates)
-            .setHTML(propertyElements)
-            .addTo(map)
-        })
-
-        map.on('mouseenter', 'points', () => {
-          map.getCanvas().style.cursor = 'pointer'
-        })
-
-        map.on('mouseleave', 'points', () => {
-          map.getCanvas().style.cursor = ''
-        })
-      })
+      map.getSource('points').setData(geoJson)
     }
-  }, [map, filteredValue])
+  }, [filteredValue])
 
   return (
     <Grid container spacing={2} sx={{ marginTop: '1vh' }}>
