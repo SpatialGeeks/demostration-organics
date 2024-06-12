@@ -27,7 +27,14 @@
     format('woff');
 }
 .map-container {
-    margin-top: 1em;
-    border-radius: 4px;
-    z-index: 1;
+  margin-top: 1em;
+  border-radius: 4px;
+  z-index: 1;
+}
+
+.map-maplibre-container {
+  height: 60em;
+  margin-left: 1em;
+  border-radius: 30px;
+  width: 100%;
 }
