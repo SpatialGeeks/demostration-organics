@@ -166,6 +166,9 @@ export const omrrSlice = createSlice({
     setOmrrData: (state, action: PayloadAction<OmrrData[]>) => {
       state.value = action.payload
     },
+    setFilteredValue: (state, action: PayloadAction<OmrrData[]>) => {
+      state.filteredValue = action.payload
+    },
     setExpand: (state, action: PayloadAction<boolean>) => {
       state.expand = action.payload
     },
@@ -337,6 +340,7 @@ export const omrrSlice = createSlice({
 export const omrrData = (state: RootState) => state.omrr.value
 export const {
   setOmrrData,
+  setFilteredValue,
   setFilters,
   setExpand,
   setLocation,

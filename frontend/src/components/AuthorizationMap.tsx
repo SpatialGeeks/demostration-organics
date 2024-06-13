@@ -30,6 +30,7 @@ import {
   searchAuthorizationsByGlobalFilter,
   setExpand,
   setFilters,
+  setFilteredValue,
   setLocation,
   setPage,
   setSearchBy,
@@ -81,7 +82,7 @@ export default function AuthorizationMap() {
       style:
         'https://api.maptiler.com/maps/openstreetmap/style.json?key=l0YRm3kb0FVo9JhCP3Ia',
       center: [-127.6476, 53.7267],
-      zoom: 10,
+      zoom: 4,
       attributionControl: false,
     })
 
@@ -135,6 +136,108 @@ export default function AuthorizationMap() {
         new maplibregl.Popup().setLngLat(coordinates).setHTML(html).addTo(map)
       })
 
+      const draw = new MapboxDraw({
+        displayControlsDefault: false,
+      })
+
+      // 1 Draw and its layer
+      map.addControl(draw)
+      map.draw = draw
+
+      map.on('draw.create', function (event) {
+        console.log(map, 'map when drawing')
+        const feature = event.features
+        const geometry = feature[0].geometry
+        const type_of_geometry = feature[0].geometry.type
+
+        if (type_of_geometry === 'Polygon') {
+          const coordinates = geometry.coordinates[0]
+          const geojsonCoordinates = coordinates.map((coord) => [
+            coord[0],
+            coord[1],
+          ])
+          const wktCoordinates = coordinates
+            .map((coord) => `${coord[0]} ${coord[1]}`)
+            .join(', ')
+          const wktCoordinates_final = `POLYGON ((${wktCoordinates}))`
+          console.log(wktCoordinates_final, 'wkt polygon ')
+
+          const geojson1 = {
+            type: 'FeatureCollection',
+            features: [
+              {
+                type: 'Feature',
+                geometry: {
+                  type: 'Polygon',
+                  coordinates: [geojsonCoordinates],
+                  properties: {},
+                },
+              },
+            ],
+          }
+          console.log(geojson1, 'geojson1')
+          const poly1 = turf.polygon([geojsonCoordinates])
+
+          const geojson2 = map.getSource('points')._data
+          console.log(geojson2, 'geojson')
+
+          const filterValueNew = filteredValue.filter((item) => {
+            const point = turf.point([item.Longitude, item.Latitude])
+            const intersection = turf.booleanIntersects(poly1, point)
+            if (intersection) {
+              return item
+            }
+          })
+
+          console.log(filterValueNew, 'filterValueNew')
+          dispatch(setFilteredValue(filterValueNew))
+
+          // const filteredGeojson2 = {
+          //   type: 'FeatureCollection',
+          //   features: geojson2.features.filter((feature) => {
+          //     const intersection = turf.booleanIntersects(poly1, feature)
+          //     console.log(intersection, 'intersection')
+          //     if (intersection) {
+          //       return feature
+          //     }
+          //   }),
+          // }
+          // console.log(filteredGeojson2, 'filteredGeojson2')
+        }
+      })
+      map.on('draw.update', function updateFunctionProject(event) {
+        console.log('draw update event listner from map')
+        // const draw = map.draw;
+        console.log(draw, 'draw update from layer control panel')
+        const feature = event.features
+        const geometry = feature[0].geometry
+        const type_of_geometry = feature[0].geometry.type
+        if (type_of_geometry === 'Polygon') {
+          const coordinates = geometry.coordinates[0]
+          const geojsonCoordinates = coordinates.map((coord) => [
+            coord[0],
+            coord[1],
+          ])
+          const wktCoordinates = coordinates
+            .map((coord) => `${coord[0]} ${coord[1]}`)
+            .join(', ')
+          const wktCoordinates_final = `POLYGON ((${wktCoordinates}))`
+          console.log(wktCoordinates_final, 'wkt polygon ')
+          const poly1 = turf.polygon([geojsonCoordinates])
+
+          const filterValueNew = filteredValue.filter((item) => {
+            const point = turf.point([item.Longitude, item.Latitude])
+            const intersection = turf.booleanIntersects(poly1, point)
+            if (intersection) {
+              return item
+            }
+          })
+
+          console.log(filterValueNew, 'filterValueNew')
+          dispatch(setFilteredValue(filterValueNew))
+        }
+      })
+
       map.on('mouseenter', 'points', () => {
         map.getCanvas().style.cursor = 'pointer'
       })
@@ -148,6 +251,22 @@ export default function AuthorizationMap() {
       map.remove()
     }
   }, [])
+
+  const handleDraw = () => {
+    const draw = map.draw
+    draw.deleteAll()
+
+    const type_of_geometry = 'Polygon'
+    if (type_of_geometry === 'Polygon') {
+      draw.changeMode('draw_polygon')
+    }
+  }
+
+  const handleCancelDraw = () => {
+    const draw = map.draw
+    draw.deleteAll()
+    dispatch(setSearchBy('all'))
+  }
 
   useEffect(() => {
     if (!map) return
@@ -170,16 +289,18 @@ export default function AuthorizationMap() {
         popups[0].remove()
       }
 
-      map.getSource('points').setData(geoJson)
-      const extent = turf.bbox(geoJson)
-      map.fitBounds(extent, {
-        padding: {
-          top: 50,
-          bottom: 50,
-          left: 50,
-          right: 50,
-        },
-      })
+      map.getSource('points')?.setData(geoJson)
+      if (geoJson.features.length) {
+        const extent = turf.bbox(geoJson)
+        // map.fitBounds(extent, {
+        //   padding: {
+        //     top: 50,
+        //     bottom: 50,
+        //     left: 50,
+        //     right: 50,
+        //   },
+        // })
+      }
     }
   }, [filteredValue])
 
@@ -262,6 +383,7 @@ export default function AuthorizationMap() {
                     Filter by Facility Type{' '}
                     {expand ? <ArrowDropUp /> : <ArrowDropDown />}
                   </Button>
+
                   {expand && (
                     <Grid
                       position={'absolute'}
@@ -369,6 +491,63 @@ export default function AuthorizationMap() {
                     </Grid>
                   )}
                 </Grid>
+                <Button
+                  sx={{
+                    marginRight: '1em',
+                    marginTop: {
+                      xs: '1.5em',
+                      sm: '0',
+                    },
+                    padding: '0.2em 1.125em',
+                    background: '#053662',
+                    color: '#ffffff',
+                    borderRadius: '4px',
+                    textTransform: 'none',
+                    order: 1,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    height: '100%',
+                    alignSelf: {
+                      sm: 'center',
+                    },
+                    '&:hover': {
+                      background: '#053662',
+                      color: '#ffffff',
+                      boxShadow: 'none',
+                    },
+                  }}
+                  onClick={handleCancelDraw}
+                >
+                  Cancel Draw
+                </Button>
+                <Button
+                  sx={{
+                    marginTop: {
+                      xs: '1.5em',
+                      sm: '0',
+                    },
+                    padding: '0.2em 1.125em',
+                    background: '#053662',
+                    color: '#ffffff',
+                    borderRadius: '4px',
+                    textTransform: 'none',
+                    order: 1,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    height: '100%',
+                    alignSelf: {
+                      sm: 'center',
+                    },
+                    '&:hover': {
+                      background: '#053662',
+                      color: '#ffffff',
+                      boxShadow: 'none',
+                    },
+                  }}
+                  onClick={handleDraw}
+                >
+                  Draw
+                </Button>
                 <Stack
                   sx={{
                     display: 'flex',
