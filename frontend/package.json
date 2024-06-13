@@ -3,6 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "homepage": "https://SpatialGeeks.github.io/demostration-organics/",
   "scripts": {
     "build": "vite build",
     "build:analyze": "vite build --mode analyze",
@@ -13,7 +14,9 @@
     "lint:fix": "npm run lint -- --fix",
     "preview": "vite preview",
     "test:unit": "vitest --mode test",
-    "test:cov": "vitest run --mode test --coverage"
+    "test:cov": "vitest run --mode test --coverage",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@bcgov/bc-sans": "^2.1.0",
